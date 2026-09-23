@@ -31,4 +31,14 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+
+	afx_msg void OnBnClickedButtonEffacer();
+
+private:
+	void Calculer();
+	void EcrireLog(const CString& logMessage);
+
+	CEdit m_editValeur1;
+	CEdit m_editValeur2;
+	CStatic m_staticResultat;
 };

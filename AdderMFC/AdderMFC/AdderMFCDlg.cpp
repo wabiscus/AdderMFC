@@ -59,12 +59,17 @@ CAdderMFCDlg::CAdderMFCDlg(CWnd* pParent /*=nullptr*/)
 void CAdderMFCDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_EDIT_NBR1, m_editValeur1);
+	DDX_Control(pDX, IDC_EDIT_NBR2, m_editValeur2);
+	DDX_Control(pDX, IDC_STATIC_RESULT, m_staticResultat);
 }
 
 BEGIN_MESSAGE_MAP(CAdderMFCDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_BN_CLICKED(IDC_BUTTON1, &CAdderMFCDlg::OnBnClickedButton1)
+	ON_BN_CLICKED(IDC_BUTTON_EFFACER, &CAdderMFCDlg::OnBnClickedButtonEffacer)
 END_MESSAGE_MAP()
 
 
@@ -153,3 +158,68 @@ HCURSOR CAdderMFCDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+void CAdderMFCDlg::OnBnClickedButtonEffacer()
+{
+	// On retire le texte des champs de saisie et du résultat
+	m_editValeur1.SetWindowText(_T(""));
+	m_editValeur2.SetWindowText(_T(""));
+	m_staticResultat.SetWindowText(_T(""));
+
+	// On remet le focus sur le premier champ de saisie
+	m_editValeur1.SetFocus();
+}
+
+void CAdderMFCDlg::Calculer()
+{
+	CString strValeur1, strValeur2;
+
+	// On récupère les valeurs saisies dans les champs de saisie
+	m_editValeur1.GetWindowText(strValeur1);
+	m_editValeur2.GetWindowText(strValeur2);	
+
+	// On supprime les espaces inutiles au début et à la fin des chaînes
+	strValeur1.Trim();
+	strValeur2.Trim();
+
+	// On check si les deux valeurs ne sont pas vides
+	if (strValeur1.IsEmpty() || strValeur2.IsEmpty())
+	{
+		AfxMessageBox(_T("Une des deux valeur est vide"), MB_ICONWARNING);
+		return;
+	}
+
+	// On définit les pointeurs de fin pour la conversion des chaînes en nombres
+	TCHAR* endPtr1 = NULL;
+	TCHAR* endPtr2 = NULL;
+
+	// On convertit les chaînes en nombres en double pour pouvoir effectuer l'addition
+	double nombre1 = _tcstod(strValeur1, &endPtr1);
+	double nombre2 = _tcstod(strValeur2, &endPtr2);
+
+	// On vérifie si la conversion est valide pour les deux nombres
+	if (endPtr1 == (LPCTSTR)strValeur1 || *endPtr1 != _T('\0'))
+	{
+		AfxMessageBox(_T("Le premier nombre n'est pas valide"), MB_ICONERROR);
+		return;
+	}
+
+	if (endPtr2 == (LPCTSTR)strValeur2 || *endPtr2 != _T('\0'))
+	{
+		AfxMessageBox(_T("Le deuxième nombre n'est pas valide"), MB_ICONERROR);
+		return;
+	}
+
+	// On effectue l'addition des deux nombres
+	double resultat = nombre1 + nombre2;
+	CString affichageResultat;
+
+	// On affiche le résultat dans le contrôle statique
+	affichageResultat.Format(_T("%f"), resultat);
+	m_staticResultat.SetWindowText(affichageResultat);
+
+	// On prépare le message de log pour l'écriture dans le fichier log.txt
+	CString logMessage;
+	logMessage.Format(_T("Calcul effectué : %s + %s = %s"), strValeur1, strValeur2, affichageResultat);
+
+	EcrireLog(logMessage);
+}
