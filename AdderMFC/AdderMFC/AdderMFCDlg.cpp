@@ -68,8 +68,8 @@ BEGIN_MESSAGE_MAP(CAdderMFCDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_BUTTON1, &CAdderMFCDlg::OnBnClickedButton1)
 	ON_BN_CLICKED(IDC_BUTTON_EFFACER, &CAdderMFCDlg::OnBnClickedButtonEffacer)
+	ON_COMMAND(ID_TOOLS_CALCULER, &CAdderMFCDlg::OnToolsCalculer)
 END_MESSAGE_MAP()
 
 
@@ -222,4 +222,14 @@ void CAdderMFCDlg::Calculer()
 	logMessage.Format(_T("Calcul effectué : %s + %s = %s"), strValeur1, strValeur2, affichageResultat);
 
 	EcrireLog(logMessage);
+}
+
+void CAdderMFCDlg::OnToolsCalculer()
+{
+	Calculer();
+}
+
+void CAdderMFCDlg::EcrireLog(const CString& logMessage)
+{
+
 }

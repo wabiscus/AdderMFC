@@ -33,6 +33,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	afx_msg void OnBnClickedButtonEffacer();
+	afx_msg void OnToolsCalculer();
 
 private:
 	void Calculer();
