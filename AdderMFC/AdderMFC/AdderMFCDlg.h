@@ -35,6 +35,9 @@ protected:
 	afx_msg void OnBnClickedButtonEffacer();
 	afx_msg void OnToolsCalculer();
 
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnContextCalculer();
+
 private:
 	void Calculer();
 	void EcrireLog(const CString& logMessage);

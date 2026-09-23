@@ -70,6 +70,8 @@ BEGIN_MESSAGE_MAP(CAdderMFCDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BUTTON_EFFACER, &CAdderMFCDlg::OnBnClickedButtonEffacer)
 	ON_COMMAND(ID_TOOLS_CALCULER, &CAdderMFCDlg::OnToolsCalculer)
+	ON_WM_CONTEXTMENU()
+	ON_COMMAND(ID_CONTEXT_CALCULER, &CAdderMFCDlg::OnContextCalculer)
 END_MESSAGE_MAP()
 
 
@@ -214,12 +216,12 @@ void CAdderMFCDlg::Calculer()
 	CString affichageResultat;
 
 	// On affiche le résultat dans le contrôle statique
-	affichageResultat.Format(_T("%f"), resultat);
+	affichageResultat.Format(_T("%g"), resultat);
 	m_staticResultat.SetWindowText(affichageResultat);
 
 	// On prépare le message de log pour l'écriture dans le fichier log.txt
 	CString logMessage;
-	logMessage.Format(_T("Calcul effectué : %s + %s = %s"), strValeur1, strValeur2, affichageResultat);
+	logMessage.Format(_T("%s + %s = %s"), strValeur1, strValeur2, affichageResultat);
 
 	EcrireLog(logMessage);
 }
@@ -229,7 +231,58 @@ void CAdderMFCDlg::OnToolsCalculer()
 	Calculer();
 }
 
-void CAdderMFCDlg::EcrireLog(const CString& logMessage)
+void CAdderMFCDlg::OnContextMenu(CWnd* pWnd, CPoint point)
 {
+	CMenu menu;
+	menu.LoadMenu(IDR_MENU_CONTEXTUEL);
+	CMenu* pContextMenu = menu.GetSubMenu(0);
+	if (pContextMenu != nullptr)
+	{
+		pContextMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
+	}
+}
 
+void CAdderMFCDlg::OnContextCalculer()
+{
+	Calculer();
+}
+
+void CAdderMFCDlg::EcrireLog(const CString& logMessage)
+{	
+	TCHAR chemin[MAX_PATH];
+
+	GetModuleFileName(NULL, chemin, MAX_PATH);
+
+	CString fichierLog(chemin);
+
+	// On récupère la position du dernier caractère '\' dans le chemin du fichier exécutable
+	int position = fichierLog.ReverseFind(_T('\\'));
+
+	if (position != -1)
+	{
+		fichierLog = fichierLog.Left(position + 1); // On garde le chemin jusqu'au dernier '\'
+	}
+
+	fichierLog += _T("calculs.log");
+
+	CStdioFile fichier;
+
+	// Si le fichier ne peut pas être ouvert, on quitte la fonction
+	if (!fichier.Open(fichierLog, CFile::modeCreate | CFile::modeNoTruncate | CFile::modeWrite | CFile::typeText))
+	{
+		return;
+	}
+
+	fichier.SeekToEnd();
+
+	CTime maintenant = CTime::GetCurrentTime();
+
+	CString dateHeure = maintenant.Format(_T("%Y-%m-%d %H:%M:%S"));
+
+	CString texte;
+
+	texte.Format(_T("[%s] %s\r\n"), dateHeure, logMessage);
+
+	fichier.WriteString(texte);	
+	fichier.Close();
 }
