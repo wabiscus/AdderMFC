@@ -49,7 +49,6 @@ END_MESSAGE_MAP()
 // boîte de dialogue de CAdderMFCDlg
 
 
-
 CAdderMFCDlg::CAdderMFCDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_ADDERMFC_DIALOG, pParent)
 {
@@ -105,8 +104,6 @@ BOOL CAdderMFCDlg::OnInitDialog()
 	//  lorsque la fenêtre principale de l'application n'est pas une boîte de dialogue
 	SetIcon(m_hIcon, TRUE);			// Définir une grande icône
 	SetIcon(m_hIcon, FALSE);		// Définir une petite icône
-
-	// TODO: ajoutez ici une initialisation supplémentaire
 
 	return TRUE;  // retourne TRUE, sauf si vous avez défini le focus sur un contrôle
 }
@@ -233,6 +230,7 @@ void CAdderMFCDlg::OnToolsCalculer()
 
 void CAdderMFCDlg::OnContextMenu(CWnd* pWnd, CPoint point)
 {
+	// On crée un menu contextuel à partir du menu de ressources
 	CMenu menu;
 	if (!menu.LoadMenu(IDR_MENU_CONTEXTUEL))
 	{
@@ -240,11 +238,12 @@ void CAdderMFCDlg::OnContextMenu(CWnd* pWnd, CPoint point)
 		return;
 	}
 
-
+	// On récupère le sous-menu du menu contextuel
 	CMenu* pContextMenu = menu.GetSubMenu(0);
 
 	if (pContextMenu != nullptr)
 	{
+		// On affiche le menu contextuel à la position du clic droit
 		pContextMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
 	}
 }
@@ -256,6 +255,7 @@ void CAdderMFCDlg::OnContextCalculer()
 
 void CAdderMFCDlg::EcrireLog(const CString& logMessage)
 {	
+	// On récupère le chemin du fichier exécutable de l'application
 	TCHAR chemin[MAX_PATH];
 
 	GetModuleFileName(NULL, chemin, MAX_PATH);
@@ -282,6 +282,7 @@ void CAdderMFCDlg::EcrireLog(const CString& logMessage)
 
 	fichier.SeekToEnd();
 
+	// On récupère la date et l'heure actuelles pour les inclure dans le log
 	CTime maintenant = CTime::GetCurrentTime();
 
 	CString dateHeure = maintenant.Format(_T("%Y-%m-%d %H:%M:%S"));
