@@ -68,9 +68,9 @@ BEGIN_MESSAGE_MAP(CAdderMFCDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_WM_CONTEXTMENU()
 	ON_BN_CLICKED(IDC_BUTTON_EFFACER, &CAdderMFCDlg::OnBnClickedButtonEffacer)
 	ON_COMMAND(ID_TOOLS_CALCULER, &CAdderMFCDlg::OnToolsCalculer)
-	ON_WM_CONTEXTMENU()
 	ON_COMMAND(ID_CONTEXT_CALCULER, &CAdderMFCDlg::OnContextCalculer)
 END_MESSAGE_MAP()
 
@@ -234,8 +234,15 @@ void CAdderMFCDlg::OnToolsCalculer()
 void CAdderMFCDlg::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	CMenu menu;
-	menu.LoadMenu(IDR_MENU_CONTEXTUEL);
+	if (!menu.LoadMenu(IDR_MENU_CONTEXTUEL))
+	{
+		AfxMessageBox(_T("Impossible de charger le menu."));
+		return;
+	}
+
+
 	CMenu* pContextMenu = menu.GetSubMenu(0);
+
 	if (pContextMenu != nullptr)
 	{
 		pContextMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
